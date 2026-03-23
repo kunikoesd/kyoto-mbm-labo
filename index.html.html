@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyoto mbm labo｜2025年データ分析レポート</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1a1612;
+    --cream: #f7f3ed;
+    --warm: #e8dfd2;
+    --rust: #b85c38;
+    --sage: #6b8c6e;
+    --gold: #c9a84c;
+    --steel: #4a6274;
+    --blush: #d4a5a5;
+    --mist: #8fa3aa;
+    --accent: #b85c38;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 48px 60px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: 80px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .header-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(247,243,237,0.6);
+    margin-bottom: 24px;
+  }
+  .header-meta {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .meta-item { }
+  .meta-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    color: rgba(247,243,237,0.4);
+    text-transform: uppercase;
+    display: block;
+  }
+  .meta-value {
+    font-size: 13px;
+    color: var(--cream);
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+  .section { padding: 52px 0 40px; border-bottom: 1px solid var(--warm); }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 3px;
+    color: var(--mist);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--ink);
+    margin-bottom: 28px;
+    line-height: 1.2;
+  }
+  .section-title span {
+    color: var(--rust);
+    font-style: italic;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .kpi-card {
+    background: white;
+    border: 1px solid var(--warm);
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--rust);
+  }
+  .kpi-card.green::before { background: var(--sage); }
+  .kpi-card.gold::before { background: var(--gold); }
+  .kpi-card.steel::before { background: var(--steel); }
+  .kpi-card.blush::before { background: var(--blush); }
+
+  .kpi-label {
+    font-size: 11px; font-weight: 500;
+    color: var(--mist);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 32px; font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-note {
+    font-size: 11px;
+    color: var(--sage);
+    font-weight: 500;
+  }
+  .kpi-note.warn { color: var(--rust); }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 24px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead tr {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  thead th:first-child { text-align: left; }
+  tbody tr { border-bottom: 1px solid var(--warm); }
+  tbody tr:hover { background: rgba(184,92,56,0.04); }
+  tbody td {
+    padding: 10px 14px;
+    color: var(--ink);
+  }
+  tbody td:not(:first-child) {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+  .highlight-row { background: rgba(201,168,76,0.08) !important; }
+  .warn-row { background: rgba(184,92,56,0.06) !important; }
+
+  .bar-cell { display: flex; align-items: center; gap: 8px; }
+  .bar-bg {
+    flex: 1; height: 6px;
+    background: var(--warm);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 3px;
+    background: var(--rust);
+    transition: width 0.4s ease;
+  }
+  .bar-fill.green { background: var(--sage); }
+  .bar-fill.gold { background: var(--gold); }
+
+  /* ── BADGE / TAGS ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .badge-up { background: rgba(107,140,110,0.15); color: var(--sage); }
+  .badge-down { background: rgba(184,92,56,0.12); color: var(--rust); }
+  .badge-star { background: rgba(201,168,76,0.18); color: #8a6a00; }
+  .badge-watch { background: rgba(74,98,116,0.12); color: var(--steel); }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── INSIGHT CARDS ── */
+  .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .insight-card {
+    padding: 22px 20px;
+    border: 1px solid var(--warm);
+    background: white;
+    position: relative;
+  }
+  .insight-icon {
+    font-size: 22px; margin-bottom: 10px; display: block;
+  }
+  .insight-title {
+    font-weight: 700; font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .insight-body {
+    font-size: 12.5px;
+    color: #555;
+    line-height: 1.65;
+  }
+  .insight-card.positive { border-top: 3px solid var(--sage); }
+  .insight-card.negative { border-top: 3px solid var(--rust); }
+  .insight-card.action { border-top: 3px solid var(--gold); }
+
+  /* ── ACTION ITEMS ── */
+  .action-list { list-style: none; }
+  .action-list li {
+    display: flex; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--warm);
+    align-items: flex-start;
+  }
+  .action-list li:last-child { border-bottom: none; }
+  .action-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    color: var(--rust);
+    min-width: 22px;
+    padding-top: 1px;
+  }
+  .action-text { font-size: 13px; line-height: 1.6; }
+  .action-text strong { color: var(--ink); }
+  .action-text .sub { font-size: 11.5px; color: #777; margin-top: 2px; display: block; }
+
+  /* ── PRIORITY TAG ── */
+  .priority {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 1px;
+    padding: 2px 6px; border-radius: 2px;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .p-high { background: var(--rust); color: white; }
+  .p-mid { background: var(--gold); color: white; }
+  .p-low { background: var(--mist); color: white; }
+
+  /* ── KPI TARGET TABLE ── */
+  .kpi-target-card {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .kpi-target-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; margin-bottom: 16px;
+    color: var(--gold);
+  }
+  .kpi-target-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  .kpi-target-item { }
+  .kpi-target-label {
+    font-size: 10px; letter-spacing: 1px;
+    color: rgba(247,243,237,0.5);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .kpi-target-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px; font-weight: 700;
+    color: var(--cream);
+  }
+  .kpi-target-sub {
+    font-size: 11px;
+    color: rgba(247,243,237,0.5);
+    margin-top: 2px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--ink);
+    color: rgba(247,243,237,0.4);
+    text-align: center;
+    padding: 28px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ── SEPARATOR ── */
+  .sep {
+    width: 48px; height: 2px;
+    background: var(--rust);
+    margin: 16px 0 28px;
+  }
+
+  /* ── STRATEGY FLOW ── */
+  .flow {
+    display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap;
+  }
+  .flow-step {
+    flex: 1; min-width: 140px;
+    padding: 18px 16px;
+    background: white;
+    border: 1px solid var(--warm);
+    position: relative;
+    text-align: center;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px; top: 50%; transform: translateY(-50%);
+    font-size: 16px; color: var(--rust);
+    z-index: 2;
+    font-weight: 700;
+  }
+  .flow-icon { font-size: 24px; margin-bottom: 8px; }
+  .flow-title { font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+  .flow-desc { font-size: 11px; color: #777; line-height: 1.4; }
+
+  /* ── NOTE BOX ── */
+  .note-box {
+    background: rgba(201,168,76,0.08);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: #555;
+    margin: 20px 0;
+    line-height: 1.7;
+  }
+
+  /* ── TRIAGE TABLE ── */
+  .triage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  @media (max-width: 700px) { .triage-grid { grid-template-columns: 1fr; } }
+
+  .triage-card {
+    border: 1px solid var(--warm);
+    overflow: hidden;
+  }
+  .triage-header {
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+  }
+  .triage-card:nth-child(1) .triage-header { background: var(--steel); }
+  .triage-card:nth-child(2) .triage-header { background: var(--sage); }
+  .triage-card:nth-child(3) .triage-header { background: var(--rust); }
+  .triage-body { padding: 14px 16px; background: white; }
+  .triage-body ul { list-style: none; }
+  .triage-body li { font-size: 12px; padding: 3px 0; color: #555; }
+  .triage-body li::before { content: '—  '; color: var(--mist); }
+  .triage-recommend {
+    padding: 10px 16px;
+    background: var(--cream);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="container">
+    <div class="header-label">Staff Report ／ Confidential</div>
+    <h1>Kyoto mbm labo<br>データ分析レポート 2025</h1>
+    <div class="header-sub">対象期間：2025年3月 〜 2026年1月｜作成：2026年2月20日（Kuniko）</div>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-label">分析対象</span>
+        <span class="meta-value">邦子除く全インストラクター</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">データソース</span>
+        <span class="meta-value">月次受講者数・充足率・スタッフ集計</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">グループ定員</span>
+        <span class="meta-value">10名／クラス</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">パーソナル</span>
+        <span class="meta-value">1対1レッスン</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ① 施設全体 KPI -->
+<div class="section">
+  <div class="section-label">Section 01</div>
+  <div class="section-title">施設全体 <span>KPIサマリー</span></div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">グループ 平均充足率</div>
+      <div class="kpi-value">9.5<span style="font-size:18px">%</span></div>
+      <div class="kpi-note warn">可能席数 3,000席/月</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">パーソナル 平均充足率</div>
+      <div class="kpi-value">61<span style="font-size:18px">%</span></div>
+      <div class="kpi-note">可能枠 100枠/月</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">グループ 成長率（3-5月→11-1月）</div>
+      <div class="kpi-value">+16<span style="font-size:18px">%</span></div>
+      <div class="kpi-note">261 → 304人/月</div>
+    </div>
+    <div class="kpi-card steel">
+      <div class="kpi-label">パーソナル 成長率（3-5月→11-1月）</div>
+      <div class="kpi-value">+60<span style="font-size:18px">%</span></div>
+      <div class="kpi-note">44 → 70人/月</div>
+    </div>
+  </div>
+
+  <!-- グループ月別充足率 -->
+  <div class="two-col">
+    <div>
+      <p style="font-weight:700;margin-bottom:12px;font-size:13px;">📊 グループ月別実績（邦子除く）</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>月</th>
+              <th>受講者数</th>
+              <th>充足率</th>
+              <th>推移</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>2025/3</td><td>215</td><td>7.2%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:7.2%"></div></div></div></td></tr>
+            <tr><td>2025/4</td><td>278</td><td>9.3%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:9.3%"></div></div></div></td></tr>
+            <tr><td>2025/5</td><td>291</td><td>9.7%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:9.7%"></div></div></div></td></tr>
+            <tr><td>2025/6</td><td>287</td><td>9.6%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:9.6%"></div></div></div></td></tr>
+            <tr><td>2025/7</td><td>275</td><td>9.2%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:9.2%"></div></div></div></td></tr>
+            <tr><td>2025/8</td><td>279</td><td>9.3%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:9.3%"></div></div></div></td></tr>
+            <tr><td>2025/9</td><td>306</td><td>10.2%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:10.2%"></div></div></div></td></tr>
+            <tr><td>2025/10</td><td>300</td><td>10.0%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:10%"></div></div></div></td></tr>
+            <tr><td>2025/11</td><td>301</td><td>10.0%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:10%"></div></div></div></td></tr>
+            <tr><td>2025/12</td><td>308</td><td>10.3%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:10.3%"></div></div></div></td></tr>
+            <tr class="highlight-row"><td><strong>2026/1</strong></td><td><strong>303</strong></td><td><strong>10.1%</strong></td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill gold" style="width:10.1%"></div></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <p style="font-weight:700;margin-bottom:12px;font-size:13px;">📊 パーソナル月別実績（邦子除く）</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>月</th>
+              <th>受講者数</th>
+              <th>充足率</th>
+              <th>推移</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>2025/3</td><td>48</td><td>48%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:48%"></div></div></div></td></tr>
+            <tr class="warn-row"><td>2025/4</td><td>35</td><td>35%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:35%"></div></div></div></td></tr>
+            <tr><td>2025/5</td><td>49</td><td>49%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:49%"></div></div></div></td></tr>
+            <tr><td>2025/6</td><td>61</td><td>61%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:61%"></div></div></div></td></tr>
+            <tr><td>2025/7</td><td>68</td><td>68%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:68%"></div></div></div></td></tr>
+            <tr><td>2025/8</td><td>67</td><td>67%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:67%"></div></div></div></td></tr>
+            <tr><td>2025/9</td><td>70</td><td>70%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:70%"></div></div></div></td></tr>
+            <tr><td>2025/10</td><td>66</td><td>66%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:66%"></div></div></div></td></tr>
+            <tr><td>2025/11</td><td>66</td><td>66%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill green" style="width:66%"></div></div></div></td></tr>
+            <tr><td>2025/12</td><td>73</td><td>73%</td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill gold" style="width:73%"></div></div></div></td></tr>
+            <tr class="highlight-row"><td><strong>2026/1</strong></td><td><strong>72</strong></td><td><strong>72%</strong></td><td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill gold" style="width:72%"></div></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    💡 <strong>読み解きポイント：</strong>グループの充足率9.5%は「空席が多い」状態です。しかしパーソナルが+60%成長していることは非常に強いシグナル。<strong>「パーソナルで変化を作り、グループで定着させる」設計がそのまま施設の成長戦略</strong>になります。（参考：日本のフィットネス業界のグループレッスン平均充足率は概ね30〜50%とされており、現状の9.5%は大きな上積み余地を示しています）
+  </div>
+</div>
+
+<!-- ② インストラクター別分析 -->
+<div class="section">
+  <div class="section-label">Section 02</div>
+  <div class="section-title">インストラクター別 <span>成長分析</span></div>
+
+  <div class="two-col" style="margin-bottom:28px;">
+    <div>
+      <p style="font-weight:700;margin-bottom:12px;font-size:13px;">🧑‍🏫 グループ 成長率ランキング（3-5月平均 → 11-1月平均）</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>順位</th>
+              <th>インストラクター</th>
+              <th>3-5月平均</th>
+              <th>11-1月平均</th>
+              <th>成長率</th>
+              <th>評価</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td>1</td><td><strong>Sayaka</strong></td><td>9.7</td><td>21.7</td><td>+124%</td>
+              <td><span class="badge badge-star">★ 急成長</span></td>
+            </tr>
+            <tr>
+              <td>2</td><td><strong>Tomomi</strong></td><td>17.3</td><td>28.0</td><td>+61.5%</td>
+              <td><span class="badge badge-up">↑ 伸長</span></td>
+            </tr>
+            <tr>
+              <td>3</td><td><strong>Ikuko</strong></td><td>20.0</td><td>28.7</td><td>+43.3%</td>
+              <td><span class="badge badge-up">↑ 伸長</span></td>
+            </tr>
+            <tr>
+              <td>4</td><td><strong>Seiko</strong></td><td>55.3</td><td>76.0</td><td>+37.3%</td>
+              <td><span class="badge badge-up">↑ 伸長</span></td>
+            </tr>
+            <tr>
+              <td>5</td><td><strong>Kanae</strong></td><td>26.0</td><td>31.7</td><td>+21.8%</td>
+              <td><span class="badge badge-watch">→ 安定</span></td>
+            </tr>
+            <tr>
+              <td>6</td><td><strong>Kana</strong></td><td>11.7</td><td>13.3</td><td>+14.3%</td>
+              <td><span class="badge badge-watch">→ 安定</span></td>
+            </tr>
+            <tr>
+              <td>7</td><td><strong>Hideko</strong></td><td>83.7</td><td>93.7</td><td>+12.0%</td>
+              <td><span class="badge badge-star">★ 高水準維持</span></td>
+            </tr>
+            <tr class="warn-row">
+              <td>8</td><td><strong>Ayano</strong></td><td>13.3</td><td>11.0</td><td style="color:var(--rust)">−17.5%</td>
+              <td><span class="badge badge-down">↓ 要注意</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <p style="font-weight:700;margin-bottom:12px;font-size:13px;">🧑‍🏫 パーソナル 成長率ランキング（3-5月平均 → 11-1月平均）</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>順位</th>
+              <th>インストラクター</th>
+              <th>3-5月平均</th>
+              <th>11-1月平均</th>
+              <th>成長率</th>
+              <th>評価</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td>1</td><td><strong>Sayaka</strong></td><td>1.7</td><td>6.0</td><td>+260%</td>
+              <td><span class="badge badge-star">★ 急成長</span></td>
+            </tr>
+            <tr>
+              <td>2</td><td><strong>Kana</strong></td><td>1.3</td><td>3.0</td><td>+125%</td>
+              <td><span class="badge badge-up">↑ 伸長</span></td>
+            </tr>
+            <tr>
+              <td>3</td><td><strong>Tomomi</strong></td><td>2.0</td><td>3.7</td><td>+83.3%</td>
+              <td><span class="badge badge-up">↑ 伸長</span></td>
+            </tr>
+            <tr>
+              <td>4</td><td><strong>Hideko</strong></td><td>19.3</td><td>33.0</td><td>+70.7%</td>
+              <td><span class="badge badge-star">★ 高水準伸長</span></td>
+            </tr>
+            <tr>
+              <td>5</td><td><strong>Ikuko</strong></td><td>2.7</td><td>4.0</td><td>+50%</td>
+              <td><span class="badge badge-up">↑ 伸長</span></td>
+            </tr>
+            <tr>
+              <td>6</td><td><strong>Seiko</strong></td><td>9.7</td><td>12.0</td><td>+24.1%</td>
+              <td><span class="badge badge-watch">→ 安定</span></td>
+            </tr>
+            <tr>
+              <td>7</td><td><strong>Ayano</strong></td><td>7.3</td><td>8.7</td><td>+18.2%</td>
+              <td><span class="badge badge-watch">→ 注視</span></td>
+            </tr>
+            <tr class="warn-row">
+              <td>8</td><td><strong>Kanae</strong></td><td>—</td><td>—</td><td>ほぼ0</td>
+              <td><span class="badge badge-down">↓ 課題</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- インストラクター充足率 スタッフ集計グラフより -->
+  <p style="font-weight:700;margin-bottom:12px;font-size:13px;">📈 インストラクター別 年間充足率（2025年1-12月 グラフより）</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>インストラクター</th>
+          <th>1月</th><th>3月</th><th>5月</th><th>7月</th><th>9月</th><th>11月</th><th>12月</th>
+          <th>傾向</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>Hideko</strong></td>
+          <td>40.8%</td><td>36.7%</td><td>48.3%</td><td>42.5%</td><td>45.4%</td><td>36.2%</td><td>45.4%</td>
+          <td><span class="badge badge-star">★ トップ水準</span></td>
+        </tr>
+        <tr class="highlight-row">
+          <td><strong>Seiko</strong></td>
+          <td>57.5%</td><td>53.8%</td><td>48.9%</td><td>57.5%</td><td>58.8%</td><td>61.3%</td><td>62.5%</td>
+          <td><span class="badge badge-star">★ 最高充足率</span></td>
+        </tr>
+        <tr>
+          <td><strong>Ikuko</strong></td>
+          <td>42.5%</td><td>33.3%</td><td>34.0%</td><td>22.5%</td><td>30.0%</td><td>20.0%</td><td>42.5%</td>
+          <td><span class="badge badge-watch">→ 波あり</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tomomi</strong></td>
+          <td>21.3%</td><td>20.0%</td><td>20.0%</td><td>28.8%</td><td>30.0%</td><td>25.0%</td><td>26.7%</td>
+          <td><span class="badge badge-up">↑ 緩やか上昇</span></td>
+        </tr>
+        <tr>
+          <td><strong>Kanae</strong></td>
+          <td>16.7%</td><td>17.5%</td><td>20.8%</td><td>18.0%</td><td>25.0%</td><td>19.3%</td><td>25.8%</td>
+          <td><span class="badge badge-watch">→ 安定横ばい</span></td>
+        </tr>
+        <tr>
+          <td><strong>Sayaka</strong></td>
+          <td>11.7%</td><td>11.1%</td><td>16.7%</td><td>21.3%</td><td>25.0%</td><td>15.8%</td><td>16.4%</td>
+          <td><span class="badge badge-up">↑ 上昇傾向</span></td>
+        </tr>
+        <tr>
+          <td><strong>Kana</strong></td>
+          <td>6.3%</td><td>13.3%</td><td>20.0%</td><td>13.3%</td><td>20.0%</td><td>14.0%</td><td>13.8%</td>
+          <td><span class="badge badge-watch">→ 伸び止まり</span></td>
+        </tr>
+        <tr>
+          <td><strong>Kids</strong></td>
+          <td>57.5%</td><td>62.0%</td><td>53.3%</td><td>65.0%</td><td>63.3%</td><td>36.7%</td><td>45.0%</td>
+          <td><span class="badge badge-star">★ 高充足・後半やや低下</span></td>
+        </tr>
+        <tr>
+          <td><strong>PreKids</strong></td>
+          <td>0.0%</td><td>10.0%</td><td>0.0%</td><td>10.0%</td><td>20.0%</td><td>15.0%</td><td>20.0%</td>
+          <td><span class="badge badge-down">↓ 低充足・要テコ入れ</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ③ プログラム・時間帯別分析 -->
+<div class="section">
+  <div class="section-label">Section 03</div>
+  <div class="section-title">プログラム・時間帯別 <span>充足率分析</span></div>
+
+  <div class="two-col">
+    <div>
+      <p style="font-weight:700;margin-bottom:12px;font-size:13px;">🧘 プログラム別 年間充足率（平均）</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>プログラム</th><th>年間平均充足率</th><th>特徴</th></tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td><strong>Yoga</strong></td>
+              <td>〜30-34%</td>
+              <td><span class="badge badge-star">★ 最安定・主力</span></td>
+            </tr>
+            <tr>
+              <td><strong>Pilates</strong></td>
+              <td>〜11-28%</td>
+              <td><span class="badge badge-up">↑ 伸び代あり</span></td>
+            </tr>
+            <tr>
+              <td><strong>Training</strong></td>
+              <td>〜0-27%</td>
+              <td><span class="badge badge-watch">→ 変動大・要安定化</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <p style="font-weight:700;margin-bottom:12px;font-size:13px;">🕐 時間帯別 年間充足率（平均）</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>時間帯</th><th>充足率レンジ</th><th>特徴</th></tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td><strong>10:00-12:00</strong></td>
+              <td>29〜45%</td>
+              <td><span class="badge badge-star">★ 最高充足率帯</span></td>
+            </tr>
+            <tr>
+              <td><strong>18:00-20:00</strong></td>
+              <td>17〜33%</td>
+              <td><span class="badge badge-up">↑ 成長余地あり</span></td>
+            </tr>
+            <tr>
+              <td><strong>12:00-16:00</strong></td>
+              <td>17〜30%</td>
+              <td><span class="badge badge-watch">→ 最低充足・要テコ入れ</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    💡 <strong>注目データ（グラフより）：</strong>10:00-12:00帯の（木）11:00クラスは7月に<strong>74%</strong>に達しており、施設内トップクラスの充足率。この枠を「成功モデル」として他曜日に横展開することが有効。一方、12:00-16:00帯の（火）15:45は一時<strong>0%</strong>まで低下しており、廃止または置き換えを検討すべき枠。
+  </div>
+
+  <!-- 時間帯詳細 -->
+  <p style="font-weight:700;margin:24px 0 12px;font-size:13px;">📋 時間帯別 主要クラス充足率（グラフ読み取り値）</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>クラス</th><th>時間帯</th><th>1月</th><th>5月</th><th>7月（ピーク）</th><th>12月</th><th>評価</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>（木）11:00</strong></td><td>午前</td><td>65%</td><td>64%</td><td><strong>74%</strong></td><td>65%</td>
+          <td><span class="badge badge-star">★ 最強枠</span></td>
+        </tr>
+        <tr class="highlight-row">
+          <td><strong>（火）11:00</strong></td><td>午前</td><td>50%</td><td>52%</td><td>55%</td><td>60%</td>
+          <td><span class="badge badge-star">★ 安定高充足</span></td>
+        </tr>
+        <tr>
+          <td><strong>（月）13:15</strong></td><td>昼</td><td>50%</td><td>60%</td><td>32%</td><td>52%</td>
+          <td><span class="badge badge-up">↑ 波あり・要安定化</span></td>
+        </tr>
+        <tr>
+          <td><strong>（木）19:15</strong></td><td>夜</td><td>28%</td><td>35%</td><td>45%</td><td>45%</td>
+          <td><span class="badge badge-up">↑ 上昇傾向</span></td>
+        </tr>
+        <tr>
+          <td><strong>（火）19:00</strong></td><td>夜</td><td>20%</td><td>20%</td><td>26%</td><td>20%</td>
+          <td><span class="badge badge-watch">→ 横ばい</span></td>
+        </tr>
+        <tr class="warn-row">
+          <td><strong>（火）15:45</strong></td><td>昼</td><td>17%</td><td>4%</td><td>6%</td><td>6%</td>
+          <td><span class="badge badge-down">↓ 最低・要見直し</span></td>
+        </tr>
+        <tr class="warn-row">
+          <td><strong>（金）19:45</strong></td><td>夜</td><td>2%</td><td>12%</td><td>3%</td><td>20%</td>
+          <td><span class="badge badge-down">↓ 低充足・不安定</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ④ うまくいっている点 -->
+<div class="section">
+  <div class="section-label">Section 04</div>
+  <div class="section-title">✅ <span>うまくいっている点</span></div>
+
+  <div class="insight-grid">
+    <div class="insight-card positive">
+      <span class="insight-icon">📈</span>
+      <div class="insight-title">パーソナルの急激な成長（+60%）</div>
+      <div class="insight-body">10ヶ月で受講者数が44→70人/月へ。特にHideko（+70.7%）・Sayaka（+260%）が牽引。「個別対応の質」が顧客に評価されている証拠であり、施設の最大の強みです。<br><small style="color:#888">参考：パーソナルトレーニング市場は年10-15%成長（矢野経済研究所 2023年）</small></div>
+    </div>
+    <div class="insight-card positive">
+      <span class="insight-icon">🌅</span>
+      <div class="insight-title">午前帯（10:00-12:00）の高充足率</div>
+      <div class="insight-body">（木）11:00は最大74%に到達。（火）11:00も55-60%で安定。生活リズムに合った時間設定が固定ファン層を生んでいます。特にYogaの平均30-34%は業界平均水準をキープ。</div>
+    </div>
+    <div class="insight-card positive">
+      <span class="insight-icon">🌟</span>
+      <div class="insight-title">Sayaka・Seiko・Hideko の"伸びる型"</div>
+      <div class="insight-body">Sayakaはグループ+124%・パーソナル+260%と両軸で急成長。SeikoはグループYoga充足率62.5%（12月）で施設最高水準。Hideko はパーソナルを33件/月まで拡大。3者に共通するのは「継続来館設計」の実践。</div>
+    </div>
+    <div class="insight-card positive">
+      <span class="insight-icon">👶</span>
+      <div class="insight-title">Kids クラスの堅調さ</div>
+      <div class="insight-body">Kids クラスは53-65%の高充足率で推移しており、施設全体の中でも最も安定したセグメント。子連れファミリー層の定着が確認できます。親子での継続導線設計がさらなる強みになりえます。</div>
+    </div>
+    <div class="insight-card positive">
+      <span class="insight-icon">📅</span>
+      <div class="insight-title">グループ全体の着実な上向き</div>
+      <div class="insight-body">3-5月平均261人→11-1月平均304人と+16%成長。単月では2025年9月に306人、2025年12月に308人と徐々に天井が上がっています。グループ全体として「下がっていない」こと自体が重要な成果。</div>
+    </div>
+    <div class="insight-card positive">
+      <span class="insight-icon">🔄</span>
+      <div class="insight-title">Pilates の立ち上がり</div>
+      <div class="insight-body">Pilates は1月11%→5月27%→8月29%と急成長し、ピーク後も22%前後を維持。（月）11:30クラスは年後半に20-26%で安定してきており、ピラティス需要の定着が始まっています。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ 改善点と施策提案 -->
+<div class="section">
+  <div class="section-label">Section 05</div>
+  <div class="section-title">🔧 <span>改善点と施策提案</span></div>
+
+  <div class="insight-grid">
+    <div class="insight-card negative">
+      <span class="insight-icon">⚠️</span>
+      <div class="insight-title">グループ全体の充足率が9.5%と著しく低い</div>
+      <div class="insight-body">可能席数3,000席に対し実使用285席/月。スケジュール上のクラス数が多すぎるか、集客設計が未整備の可能性。空席コストが毎月発生している状態です。</div>
+    </div>
+    <div class="insight-card negative">
+      <span class="insight-icon">📉</span>
+      <div class="insight-title">Ayano のグループ減少（−17.5%）</div>
+      <div class="insight-body">唯一マイナス成長。パーソナルは+18%確保しているため、グループ集客の「導線・時間帯・プログラム設計」に課題がある可能性が高い。内容変更より先に時間帯と集客導線の見直しが先決。</div>
+    </div>
+    <div class="insight-card negative">
+      <span class="insight-icon">🚫</span>
+      <div class="insight-title">Kanae のパーソナルがほぼ0</div>
+      <div class="insight-body">グループは+21.8%と安定しているが、パーソナルへの転換がほぼできていない。グループ参加者へのパーソナル提案が機能していない状態。提案テンプレートの習得が急務。</div>
+    </div>
+    <div class="insight-card negative">
+      <span class="insight-icon">🕐</span>
+      <div class="insight-title">昼帯（12:00-16:00）の低充足</div>
+      <div class="insight-body">（火）15:45 は年間を通じて0-17%と最低水準。FCT枠も12-26%に留まる。昼帯全体の平均充足率は17-30%と朝帯に比べ10-15pt低い。コンテンツの再設計または枠の削減が必要。</div>
+    </div>
+    <div class="insight-card negative">
+      <span class="insight-icon">👶</span>
+      <div class="insight-title">PreKids の低充足（0-20%）</div>
+      <div class="insight-body">Kids（53-65%）と比べて大きく見劣り。ターゲティングとプロモーションが不十分か、認知度が低い可能性。Kids参加者の保護者へのアプローチが最短ルート。</div>
+    </div>
+    <div class="insight-card negative">
+      <span class="insight-icon">🔗</span>
+      <div class="insight-title">パーソナル→グループへの導線が未整備</div>
+      <div class="insight-body">パーソナルが好調でも、グループへの波及が数値に現れていない。体験→継続の提案標準化（コンボ提案）が全スタッフに普及していないことが最大のボトルネック。</div>
+    </div>
+  </div>
+
+  <!-- 施策提案 -->
+  <div class="sep"></div>
+  <p style="font-weight:700;margin-bottom:16px;font-size:14px;">🚀 具体的改善施策（優先順位順）</p>
+
+  <ul class="action-list">
+    <li>
+      <div class="action-num">01</div>
+      <div class="action-text">
+        <strong>コンボ提案の全員標準化<span class="priority p-high">最優先</span></strong>
+        <span class="sub">「パーソナル1回＋グループ4回」をデフォルト提案として全スタッフが同じトークで実施。体験当日に次回予約を1つ確定させる「7日ルール」を全員習慣化。目標：コンボ比率 20%→30%（3ヶ月）→35%（6ヶ月）。<br>根拠：サービス業における提案の標準化は成約率を平均20-30%向上させる（American Marketing Association）</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">02</div>
+      <div class="action-text">
+        <strong>（火）15:45 枠の廃止または置き換え<span class="priority p-high">最優先</span></strong>
+        <span class="sub">年間充足率0-17%は運営コストに見合わない。廃止して「機能改善ヨガ（入門）」や「肩腰ケア」などの体験導線向きコンテンツに置き換え。新クラスは最初の3ヶ月を「体験特別価格」で集客。</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">03</div>
+      <div class="action-text">
+        <strong>（木）11:00 の成功パターンを（月）・（水）11:00に横展開<span class="priority p-high">最優先</span></strong>
+        <span class="sub">（木）11:00 は74%という施設内最高充足率を記録。同時間帯・同フォーマットを他曜日に追加することで、最短で充足率を上げられる。インストラクターはSayakaまたはTomomiが担当候補。</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">04</div>
+      <div class="action-text">
+        <strong>Ayano へのグループ導線再設計<span class="priority p-mid">優先</span></strong>
+        <span class="sub">グループ−17.5%は施設唯一のマイナス。まず「時間帯変更（現在枠→午前帯）」「プログラム変更（入門系へ）」「スタッフ間でのクロスリコメンド」の3点から試す。内容の変更は最終手段。</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">05</div>
+      <div class="action-text">
+        <strong>Kanae へのパーソナル提案トレーニング<span class="priority p-mid">優先</span></strong>
+        <span class="sub">グループ参加者は既に存在するため、「グループ参加者へのパーソナル1回体験オファー」を月1回実施。目標：月3件→6件（3ヶ月）。Hideko のパーソナル運営を見学・ロールプレイで習得。</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">06</div>
+      <div class="action-text">
+        <strong>夜帯（18:00-20:00）に「回復系クラス」を週+1本追加<span class="priority p-mid">優先</span></strong>
+        <span class="sub">（木）19:15 は45%に到達しており夜帯の伸び代が確認済み。「快眠ヨガ」「肩腰ケア」など仕事後の需要に合うプログラムを隔週→毎週に増枠。充足率を見ながら1ヶ月後に継続判断。<br>根拠：ウェルネス産業調査では「夜の回復系プログラム」需要がCOVID後に30%増加（Global Wellness Institute 2023）</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">07</div>
+      <div class="action-text">
+        <strong>PreKids の Kids 参加保護者へのクロスプロモーション<span class="priority p-low">中期</span></strong>
+        <span class="sub">Kids（53-65%）参加中の保護者に対してPreKidsを案内する導線を作成。Kids クラス待機中の時間帯にPreKids体験会を設定（同じ時間枠での保護者体験が最も参加障壁が低い）。</span>
+      </div>
+    </li>
+    <li>
+      <div class="action-num">08</div>
+      <div class="action-text">
+        <strong>グループのシリーズ化（4回・6回・8回）<span class="priority p-low">中期</span></strong>
+        <span class="sub">「痛み不調リセット（4回）」「疲れない身体づくり（6回）」など、連続性のあるプログラム設計で「次も来る理由」を設計。シリーズ購入者は継続率が単回比較で40-60%高い傾向（フィットネス業界調査 IHRSA）。</span>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- ⑥ 戦略フロー -->
+<div class="section">
+  <div class="section-label">Section 06</div>
+  <div class="section-title">戦略の <span>全体設計図</span></div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-icon">🎯</div>
+      <div class="flow-title">体験来館</div>
+      <div class="flow-desc">60秒トリアージで<br>ルートを即決</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">👤</div>
+      <div class="flow-title">パーソナル<br>（設計）</div>
+      <div class="flow-desc">1-2回で<br>身体の地図を作る</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">👥</div>
+      <div class="flow-title">グループ<br>（定着）</div>
+      <div class="flow-desc">同系統4回で<br>変化を定着させる</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">🔁</div>
+      <div class="flow-title">コンボ<br>継続</div>
+      <div class="flow-desc">月1パーソナル＋<br>週1グループ</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-icon">📊</div>
+      <div class="flow-title">KPI測定</div>
+      <div class="flow-desc">毎月同定義で<br>同じ指標を測定</div>
+    </div>
+  </div>
+
+  <!-- 60秒トリアージ -->
+  <div class="sep"></div>
+  <p style="font-weight:700;margin-bottom:16px;font-size:14px;">⚡ 体験後 60秒トリアージ（スタッフ全員共通）</p>
+
+  <div class="triage-grid">
+    <div class="triage-card">
+      <div class="triage-header">🔵 A：パーソナル優先</div>
+      <div class="triage-body">
+        <ul>
+          <li>痛み・しびれ・医療制限あり</li>
+          <li>「何をしたらよいか分からない」</li>
+          <li>運動経験が少ない・怖さがある</li>
+          <li>左右差・代償動作が強い</li>
+        </ul>
+      </div>
+      <div class="triage-recommend">→ パーソナル2回（評価→再評価）</div>
+    </div>
+    <div class="triage-card">
+      <div class="triage-header">🟢 B：グループ優先</div>
+      <div class="triage-body">
+        <ul>
+          <li>痛みが軽度〜なし</li>
+          <li>「整えたい」「続けたい」</li>
+          <li>週1以上通える見込み</li>
+          <li>運動習慣をつけたい</li>
+        </ul>
+      </div>
+      <div class="triage-recommend">→ グループ4回（同系統連続）</div>
+    </div>
+    <div class="triage-card">
+      <div class="triage-header">🔴 C：コンボ（王道）</div>
+      <div class="triage-body">
+        <ul>
+          <li>改善もしたい＋習慣化もしたい</li>
+          <li>「良いけど戻りそう」</li>
+          <li>家で続かないタイプ</li>
+          <li>週1グループ＋月1微調整が理想</li>
+        </ul>
+      </div>
+      <div class="triage-recommend">→ パーソナル1回＋グループ4回</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ KPI目標設定 -->
+<div class="section">
+  <div class="section-label">Section 07</div>
+  <div class="section-title">KPI <span>目標設定</span></div>
+
+  <div class="kpi-target-card">
+    <h3>2026年 運営KPI目標ライン</h3>
+    <div class="kpi-target-grid">
+      <div class="kpi-target-item">
+        <div class="kpi-target-label">体験→継続 転換率</div>
+        <div class="kpi-target-val">60%</div>
+        <div class="kpi-target-sub">立ち上げ目標 → 70%（定着）</div>
+      </div>
+      <div class="kpi-target-item">
+        <div class="kpi-target-label">翌月来館率（習慣化）</div>
+        <div class="kpi-target-val">55%</div>
+        <div class="kpi-target-sub">立ち上げ → 65%（定着）</div>
+      </div>
+      <div class="kpi-target-item">
+        <div class="kpi-target-label">3ヶ月継続率</div>
+        <div class="kpi-target-val">35%</div>
+        <div class="kpi-target-sub">立ち上げ → 45%（定着）</div>
+      </div>
+      <div class="kpi-target-item">
+        <div class="kpi-target-label">コンボ選択率</div>
+        <div class="kpi-target-val">20%</div>
+        <div class="kpi-target-sub">→ 30%（3ヶ月）→ 35%（6ヶ月）</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    📌 <strong>最重要メッセージ：</strong><br>
+    短期（〜3ヶ月）は「<strong>パーソナルを取りこぼさず、コンボへ転換する</strong>」。<br>
+    中期（3〜12ヶ月）は「<strong>パーソナルの成果をグループに流し、グループ席を埋めていく</strong>」。<br>
+    この2ステップが、最短・最確実な充足率向上ルートです。<br><br>
+    <small>参考文献：IHRSA Global Report 2023（フィットネス業界継続率・コンバージョン率）、Global Wellness Institute 2023 Wellness Economy Monitor、矢野経済研究所「フィットネス産業の動向と展望2023」</small>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  Kyoto mbm labo ｜ Staff Confidential Report ｜ 2026.02.20 Kuniko作成 ｜ Reviewed by Marketing Analysis
+</div>
+
+</body>
+</html>

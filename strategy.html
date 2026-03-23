@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyoto mbm labo｜成長戦略レポート</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap');
+  :root {
+    --ink:#1a1612; --cream:#f7f3ed; --warm:#e8dfd2;
+    --rust:#b85c38; --sage:#6b8c6e; --gold:#c9a84c;
+    --steel:#4a6274; --mist:#8fa3aa; --lav:#7c6fa0;
+    --lgray:#f4f1ec;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.75}
+  .header{background:var(--ink);color:var(--cream);padding:44px 52px 36px;position:relative;overflow:hidden}
+  .header::after{content:'¥';position:absolute;right:40px;top:50%;transform:translateY(-50%);font-family:'DM Serif Display',serif;font-size:200px;color:rgba(201,168,76,0.07);line-height:1}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+  .header h1{font-family:'DM Serif Display',serif;font-size:40px;line-height:1.1;margin-bottom:8px}
+  .header h1 em{color:var(--gold);font-style:normal}
+  .header-sub{font-size:12px;color:rgba(247,243,237,0.55);margin-bottom:20px}
+  .target-toggle{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .tt-btn{padding:7px 20px;border-radius:20px;font-size:12px;font-weight:700;border:2px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.6);cursor:pointer;background:none;transition:all .2s;font-family:'Noto Sans JP',sans-serif}
+  .tt-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+  .container{max-width:1080px;margin:0 auto;padding:0 40px}
+  .section{padding:48px 0 40px;border-bottom:1px solid var(--warm)}
+  .section:last-child{border-bottom:none}
+  .sec-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--mist);text-transform:uppercase;margin-bottom:5px}
+  .sec-title{font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px;line-height:1.2}
+  .sec-title em{color:var(--rust);font-style:italic}
+  .sep{width:36px;height:2px;background:var(--rust);margin:12px 0 24px}
+  /* KPI CARDS */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+  .kpi-card{background:white;border:1px solid var(--warm);padding:20px 16px;position:relative;overflow:hidden}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
+  .kpi-card.c1::before{background:var(--rust)}
+  .kpi-card.c2::before{background:var(--sage)}
+  .kpi-card.c3::before{background:var(--gold)}
+  .kpi-card.c4::before{background:var(--lav)}
+  .kpi-label{font-size:10px;color:var(--mist);font-weight:500;margin-bottom:6px}
+  .kpi-value{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:5px}
+  .kpi-note{font-size:10px;color:#777}
+  /* SIMULATOR */
+  .sim-wrap{background:white;border:1px solid var(--warm);padding:28px;margin-bottom:20px}
+  .sim-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+  .sim-kpi{background:var(--lgray);padding:14px;border-radius:4px}
+  .sim-kpi-label{font-size:10px;color:var(--mist);margin-bottom:4px;font-weight:500}
+  .sim-kpi-val{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--ink);line-height:1}
+  .sim-kpi-sub{font-size:10px;color:#888;margin-top:3px}
+  .bar-wrap{margin-bottom:20px}
+  .bar-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--mist)}
+  .bar-track{height:14px;background:var(--lgray);border-radius:7px;overflow:hidden;display:flex}
+  .bar-seg{height:100%;transition:width .3s}
+  .bar-legend{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+  .bl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
+  .bl-dot{width:10px;height:10px;border-radius:2px}
+  .ctrl-section{border-top:1px solid var(--warm);padding-top:18px;margin-top:4px}
+  .ctrl-label{font-size:10px;font-weight:700;color:var(--mist);letter-spacing:1px;text-transform:uppercase;margin:16px 0 8px}
+  .ctrl-label:first-child{margin-top:0}
+  .ctrl-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .ctrl-row label{font-size:12px;color:var(--ink);min-width:200px}
+  .ctrl-row .val{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--ink);min-width:80px;text-align:right}
+  .status-msg{padding:12px 16px;border-radius:4px;font-size:12.5px;margin-top:16px;font-weight:500}
+  .status-ok{background:#EAF3DE;color:#27500A}
+  .status-near{background:#FAEEDA;color:#633806}
+  .status-far{background:var(--lgray);color:#666}
+  /* TARGET LINE */
+  .target-line{position:relative;height:2px;background:rgba(184,92,56,0.2);margin:8px 0 2px}
+  .target-marker{position:absolute;top:-10px;height:22px;width:2px;background:var(--rust)}
+  .target-text{position:absolute;top:-28px;font-size:9px;color:var(--rust);font-weight:700;white-space:nowrap;transform:translateX(-50%)}
+  /* TABLES */
+  .tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:20px}
+  .tbl thead tr{background:var(--ink);color:var(--cream)}
+  .tbl thead th{padding:10px 12px;text-align:left;font-weight:500;font-size:11px}
+  .tbl tbody tr{border-bottom:1px solid var(--warm)}
+  .tbl tbody tr:hover{background:rgba(184,92,56,0.03)}
+  .tbl tbody td{padding:9px 12px;vertical-align:top}
+  .tbl td:not(:first-child){font-family:'Space Mono',monospace;font-size:11px}
+  .hl{background:rgba(201,168,76,0.08)!important}
+  .wn{background:rgba(184,92,56,0.06)!important}
+  /* PHASE CARDS */
+  .phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px}
+  .phase-card{border:1px solid var(--warm);background:white;overflow:hidden}
+  .phase-head{padding:12px 14px;font-size:12px;font-weight:700;color:white}
+  .phase-body{padding:14px;font-size:11.5px;color:#555;line-height:1.65}
+  .phase-body ul{list-style:none}
+  .phase-body li{padding:3px 0;border-bottom:1px solid var(--warm)}
+  .phase-body li:last-child{border-bottom:none}
+  .phase-body li::before{content:'→ ';color:var(--mist);font-weight:700}
+  .phase-target{padding:10px 14px;background:var(--lgray);font-size:11px;font-weight:700;color:var(--ink)}
+  /* NOTE BOX */
+  .note{background:rgba(201,168,76,0.08);border-left:3px solid var(--gold);padding:12px 16px;font-size:12px;color:#555;margin:16px 0;line-height:1.7}
+  /* PRICE TABLE */
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  @media(max-width:600px){.price-grid{grid-template-columns:1fr}}
+  .price-card{background:white;border:1px solid var(--warm);padding:18px}
+  .price-card-title{font-size:12px;font-weight:700;color:white;padding:8px 12px;margin:-18px -18px 14px}
+  /* FOOTER */
+  .footer{background:var(--ink);color:rgba(247,243,237,0.35);text-align:center;padding:24px;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:1px}
+  .badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:2px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+  .badge-up{background:rgba(107,140,110,0.15);color:var(--sage)}
+  .badge-dn{background:rgba(184,92,56,0.12);color:var(--rust)}
+  .badge-st{background:rgba(201,168,76,0.18);color:#7a5f00}
+  .badge-wt{background:rgba(74,98,116,0.12);color:var(--steel)}
+  input[type=range]{flex:1}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="container">
+    <div class="eyebrow">Growth Strategy Report / Kyoto mbm labo / 2026</div>
+    <h1>成長戦略レポート<br><em>収益目標シミュレーター</em></h1>
+    <div class="header-sub">実際の料金体系（グループ3,000円・パーソナル75分11,000円・60分8,800円）に基づく分析</div>
+    <div class="target-toggle">
+      <button class="tt-btn" onclick="setTarget(2000000,this)">目標 200万円</button>
+      <button class="tt-btn active" onclick="setTarget(3000000,this)">目標 300万円</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- SECTION 1: 収益シミュレーター -->
+<div class="section">
+  <div class="sec-label">Section 01</div>
+  <div class="sec-title">収益<em>シミュレーター</em></div>
+  <div class="sep"></div>
+
+  <div class="sim-wrap">
+    <div class="sim-kpi-row" id="simKpis"></div>
+
+    <div class="bar-wrap">
+      <div class="bar-row">
+        <span>月間収益 内訳</span>
+        <span id="simTotal" style="font-weight:700;color:var(--ink);font-family:'Space Mono',monospace">0万円</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-seg" id="bs1" style="background:var(--sage)"></div>
+        <div class="bar-seg" id="bs2" style="background:var(--steel)"></div>
+        <div class="bar-seg" id="bs3" style="background:var(--lav)"></div>
+        <div class="bar-seg" id="bs4" style="background:var(--gold)"></div>
+      </div>
+      <div class="bar-legend">
+        <div class="bl-item"><div class="bl-dot" style="background:var(--sage)"></div>グループ <span id="bl1"></span></div>
+        <div class="bl-item"><div class="bl-dot" style="background:var(--steel)"></div>パーソナル75分 <span id="bl2"></span></div>
+        <div class="bl-item"><div class="bl-dot" style="background:var(--lav)"></div>パーソナル60分 <span id="bl3"></span></div>
+        <div class="bl-item"><div class="bl-dot" style="background:var(--gold)"></div>コンボ <span id="bl4"></span></div>
+      </div>
+    </div>
+
+    <div class="ctrl-section">
+      <div class="ctrl-label">グループレッスン（単価 3,000円/名 × 定員10名）</div>
+      <div class="ctrl-row">
+        <label>月クラス数</label>
+        <input type="range" min="10" max="60" step="1" value="30" id="gClass" oninput="sim()">
+        <span class="val" id="vGClass">30本</span>
+      </div>
+      <div class="ctrl-row">
+        <label>平均充足率</label>
+        <input type="range" min="5" max="90" step="1" value="10" id="gFill" oninput="sim()">
+        <span class="val" id="vGFill">10%</span>
+      </div>
+
+      <div class="ctrl-label">パーソナル 75分 — Hideko・Seiko・Tomomi・Ikuko・Kanae（11,000円）</div>
+      <div class="ctrl-row">
+        <label>月総件数</label>
+        <input type="range" min="0" max="100" step="1" value="53" id="p75" oninput="sim()">
+        <span class="val" id="vP75">53件</span>
+      </div>
+
+      <div class="ctrl-label">パーソナル 60分 — Ayano・Kana・Sayaka（8,800円 / 3月〜）</div>
+      <div class="ctrl-row">
+        <label>月総件数</label>
+        <input type="range" min="0" max="60" step="1" value="18" id="p60" oninput="sim()">
+        <span class="val" id="vP60">18件</span>
+      </div>
+
+      <div class="ctrl-label">コンボパッケージ（パーソナル1回＋グループ4回）</div>
+      <div class="ctrl-row">
+        <label>月販売件数</label>
+        <input type="range" min="0" max="40" step="1" value="0" id="cCount" oninput="sim()">
+        <span class="val" id="vCC">0件</span>
+      </div>
+      <div class="ctrl-row">
+        <label>コンボ単価（グループ込み）</label>
+        <input type="range" min="15000" max="50000" step="500" value="25000" id="cPrice" oninput="sim()">
+        <span class="val" id="vCP">25,000円</span>
+      </div>
+
+      <div id="simMsg" class="status-msg status-far">スライダーを動かして確認してください</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: 料金体系と現状 -->
+<div class="section">
+  <div class="sec-label">Section 02</div>
+  <div class="sec-title">料金体系と<em>現状分析</em></div>
+  <div class="sep"></div>
+
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="price-card-title" style="background:var(--sage)">グループレッスン</div>
+      <table class="tbl" style="margin-bottom:0">
+        <thead><tr><th>項目</th><th>数値</th></tr></thead>
+        <tbody>
+          <tr><td>単価（1名）</td><td>3,000円</td></tr>
+          <tr><td>定員</td><td>10名</td></tr>
+          <tr><td>満席時売上/クラス</td><td>30,000円</td></tr>
+          <tr><td>現状充足率</td><td>9.5%</td></tr>
+          <tr><td>現状平均参加人数</td><td>約0.95名/クラス</td></tr>
+          <tr class="hl"><td>目標充足率（200万円）</td><td>約25%</td></tr>
+          <tr class="hl"><td>目標充足率（300万円）</td><td>約34%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="price-card">
+      <div class="price-card-title" style="background:var(--steel)">パーソナルレッスン</div>
+      <table class="tbl" style="margin-bottom:0">
+        <thead><tr><th>インストラクター</th><th>種別</th><th>単価</th><th>現状件数</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td><strong>Hideko</strong></td><td>75分</td><td>11,000円</td><td>33件</td></tr>
+          <tr><td>Seiko</td><td>75分</td><td>11,000円</td><td>12件</td></tr>
+          <tr><td>Tomomi</td><td>75分</td><td>11,000円</td><td>4件</td></tr>
+          <tr><td>Ikuko</td><td>75分</td><td>11,000円</td><td>4件</td></tr>
+          <tr><td>Kanae</td><td>75分</td><td>11,000円</td><td>0件</td></tr>
+          <tr><td>Ayano</td><td>60分（3月〜）</td><td>8,800円</td><td>9件</td></tr>
+          <tr><td>Kana</td><td>60分（3月〜）</td><td>8,800円</td><td>3件</td></tr>
+          <tr><td>Sayaka</td><td>60分（3月〜）</td><td>8,800円</td><td>6件</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="note">
+    💡 <strong>重要な気づき：</strong>Hidekoが75分×11,000円×33件＝<strong>363,000円/月を一人で稼いでいます。</strong>この一人への依存リスクを分散しながら、75分組（高単価）の件数を全体で増やすことが最優先です。また、グループ単価3,000円は業界水準として非常に高い設定です。充足率が25%（2.5名/クラス）になるだけで大きな収益増につながります。
+  </div>
+</div>
+
+<!-- SECTION 3: 目標設定 -->
+<div class="section">
+  <div class="sec-label">Section 03</div>
+  <div class="sec-title">目標別<em>収益内訳設計</em></div>
+  <div class="sep"></div>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>収益源</th><th>現状（推定）</th><th>200万円目標</th><th>300万円目標</th><th>最大理論値</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>グループ</strong><br><span style="font-size:10px;color:#888">30クラス×定員10名×3,000円</span></td>
+        <td>約27万円<br><span style="font-size:10px;color:#888">充足率9.5%</span></td>
+        <td class="hl"><strong>約55万円</strong><br><span style="font-size:10px;color:#888">充足率20%・2名/クラス</span></td>
+        <td class="hl"><strong>約90万円</strong><br><span style="font-size:10px;color:#888">充足率33%・3.3名/クラス</span></td>
+        <td>900万円<br><span style="font-size:10px;color:#888">満席（充足率100%）</span></td>
+      </tr>
+      <tr>
+        <td><strong>パーソナル75分</strong><br><span style="font-size:10px;color:#888">11,000円/回</span></td>
+        <td>約58万円<br><span style="font-size:10px;color:#888">53件/月</span></td>
+        <td class="hl"><strong>約77万円</strong><br><span style="font-size:10px;color:#888">70件/月</span></td>
+        <td class="hl"><strong>約88万円</strong><br><span style="font-size:10px;color:#888">80件/月</span></td>
+        <td>110万円<br><span style="font-size:10px;color:#888">100件/月</span></td>
+      </tr>
+      <tr>
+        <td><strong>パーソナル60分</strong><br><span style="font-size:10px;color:#888">8,800円/回（3月〜）</span></td>
+        <td>約16万円<br><span style="font-size:10px;color:#888">18件/月</span></td>
+        <td class="hl"><strong>約22万円</strong><br><span style="font-size:10px;color:#888">25件/月</span></td>
+        <td class="hl"><strong>約26万円</strong><br><span style="font-size:10px;color:#888">30件/月</span></td>
+        <td>44万円<br><span style="font-size:10px;color:#888">50件/月</span></td>
+      </tr>
+      <tr>
+        <td><strong>コンボパッケージ</strong><br><span style="font-size:10px;color:#888">P1回＋G4回</span></td>
+        <td>0円<br><span style="font-size:10px;color:#888">未設定</span></td>
+        <td class="hl"><strong>約45万円</strong><br><span style="font-size:10px;color:#888">18件×25,000円</span></td>
+        <td class="hl"><strong>約50万円</strong><br><span style="font-size:10px;color:#888">20件×25,000円</span></td>
+        <td>100万円<br><span style="font-size:10px;color:#888">40件×25,000円</span></td>
+      </tr>
+      <tr style="background:var(--lgray)">
+        <td><strong>合計</strong></td>
+        <td><strong>約101万円</strong></td>
+        <td class="hl"><strong style="color:var(--rust);font-size:15px">約199万円</strong></td>
+        <td class="hl"><strong style="color:var(--sage);font-size:15px">約254万円</strong><br><span style="font-size:10px;color:#888">+αでコンボ積み増し</span></td>
+        <td><strong>1,154万円</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    📌 <strong>200万円は現実的に3〜6ヶ月で達成可能です。</strong>パーソナル75分を70件（現状+17件）・コンボを月18件導入・グループ充足率を20%に上げる、この3点だけで到達します。300万円はグループ充足率33%という高い目標が必要で、12ヶ月単位の計画です。
+  </div>
+</div>
+
+<!-- SECTION 4: インストラクター別目標 -->
+<div class="section">
+  <div class="sec-label">Section 04</div>
+  <div class="sec-title">インストラクター別<em>パーソナル目標</em></div>
+  <div class="sep"></div>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>担当</th><th>種別・単価</th><th>現状/月</th><th>200万円目標</th><th>300万円目標</th><th>月収寄与（目標時）</th><th>優先施策</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><strong>Hideko</strong></td><td>75分・11,000円</td><td>33件</td>
+        <td>40件</td><td>50件</td>
+        <td>44〜55万円</td>
+        <td><span class="badge badge-st">★ 維持拡大</span></td>
+      </tr>
+      <tr>
+        <td><strong>Seiko</strong></td><td>75分・11,000円</td><td>12件</td>
+        <td>16件</td><td>18件</td>
+        <td>17.6〜19.8万円</td>
+        <td><span class="badge badge-up">↑ 提案強化</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tomomi</strong></td><td>75分・11,000円</td><td>4件</td>
+        <td>6件</td><td>8件</td>
+        <td>6.6〜8.8万円</td>
+        <td><span class="badge badge-up">↑ 提案習得</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ikuko</strong></td><td>75分・11,000円</td><td>4件</td>
+        <td>6件</td><td>8件</td>
+        <td>6.6〜8.8万円</td>
+        <td><span class="badge badge-up">↑ 提案習得</span></td>
+      </tr>
+      <tr class="wn">
+        <td><strong>Kanae</strong></td><td>75分・11,000円</td><td>0件</td>
+        <td>3件</td><td>6件</td>
+        <td>3.3〜6.6万円</td>
+        <td><span class="badge badge-dn">↓ 最優先</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ayano</strong></td><td>60分・8,800円</td><td>9件</td>
+        <td>10件</td><td>12件</td>
+        <td>8.8〜10.6万円</td>
+        <td><span class="badge badge-wt">→ 維持</span></td>
+      </tr>
+      <tr>
+        <td><strong>Kana</strong></td><td>60分・8,800円</td><td>3件</td>
+        <td>6件</td><td>8件</td>
+        <td>5.3〜7.0万円</td>
+        <td><span class="badge badge-up">↑ 伸ばす</span></td>
+      </tr>
+      <tr>
+        <td><strong>Sayaka</strong></td><td>60分・8,800円</td><td>6件</td>
+        <td>9件</td><td>10件</td>
+        <td>7.9〜8.8万円</td>
+        <td><span class="badge badge-up">↑ 急成長中</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 5: ロードマップ -->
+<div class="section">
+  <div class="sec-label">Section 05</div>
+  <div class="sec-title">達成<em>ロードマップ</em></div>
+  <div class="sep"></div>
+
+  <div class="phase-grid">
+    <div class="phase-card">
+      <div class="phase-head" style="background:var(--rust)">PHASE 1　3〜4月（今すぐ）</div>
+      <div class="phase-body">
+        <ul>
+          <li>コンボ提案ロールプレイ開始（週1・10分）</li>
+          <li>体験後7日以内フォロー全員標準化</li>
+          <li>Kanae へのパーソナル提案個別指導</li>
+          <li>（火）15:45 廃止・入門クラスに置換</li>
+          <li>Hideko・Seiko プロフィール完成・掲載</li>
+        </ul>
+      </div>
+      <div class="phase-target">目標：月収 130〜150万円</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-head" style="background:var(--gold);color:var(--ink)">PHASE 2　5〜7月</div>
+      <div class="phase-body">
+        <ul>
+          <li>コンボ月10〜15件 安定獲得</li>
+          <li>（木）11:00の型を月・水に横展開</li>
+          <li>充足率ボーナス制度を委託へ導入</li>
+          <li>SNS週3〜4本 体系的に運用開始</li>
+          <li>紹介制度カードを全会員に配布</li>
+        </ul>
+      </div>
+      <div class="phase-target">目標：月収 160〜185万円</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-head" style="background:var(--sage)">PHASE 3　8〜10月（200万円）</div>
+      <div class="phase-body">
+        <ul>
+          <li>コンボ月18〜20件・転換率25%以上</li>
+          <li>グループ充足率 20%達成</li>
+          <li>パーソナル75分 70件/月</li>
+          <li>企業出張レッスン月1〜2件</li>
+          <li>インストラクター別月次マイレポート開始</li>
+        </ul>
+      </div>
+      <div class="phase-target" style="color:var(--sage)">🎯 200万円ライン達成</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-head" style="background:var(--lav)">PHASE 4　11月〜（300万円）</div>
+      <div class="phase-body">
+        <ul>
+          <li>グループ充足率 33%・月90万円</li>
+          <li>パーソナル75分 80件 / 60分 30件</li>
+          <li>コンボ月20件 安定維持</li>
+          <li>観光客向けプラン本格稼働</li>
+          <li>Hideko依存リスクの分散完了</li>
+        </ul>
+      </div>
+      <div class="phase-target" style="color:var(--lav)">🎯 300万円ライン達成</div>
+    </div>
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>KPI指標</th><th>現状</th><th>3ヶ月</th><th>6ヶ月（200万円）</th><th>12ヶ月（300万円）</th></tr>
+    </thead>
+    <tbody>
+      <tr class="hl"><td><strong>グループ充足率</strong></td><td>9.5%</td><td>15%</td><td>20%</td><td>33%</td></tr>
+      <tr><td><strong>パーソナル75分 月件数</strong></td><td>53件</td><td>60件</td><td>70件</td><td>80件</td></tr>
+      <tr><td><strong>パーソナル60分 月件数</strong></td><td>18件</td><td>20件</td><td>25件</td><td>30件</td></tr>
+      <tr class="hl"><td><strong>コンボ月販売件数</strong></td><td>0件</td><td>8件</td><td>18件</td><td>20件</td></tr>
+      <tr><td><strong>月間体験者数</strong></td><td>計測開始</td><td>12名</td><td>18名</td><td>25名</td></tr>
+      <tr><td><strong>体験→継続転換率</strong></td><td>計測開始</td><td>50%</td><td>60%</td><td>65%</td></tr>
+      <tr style="background:var(--lgray)"><td><strong>月間収益（推定）</strong></td><td>約101万円</td><td>約140万円</td><td><strong style="color:var(--rust)">約200万円</strong></td><td><strong style="color:var(--sage)">約300万円</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    🎯 <strong>最重要：今週から始める3つのこと</strong><br>
+    ① コンボ提案ロールプレイ（週1回・10分）を今週スタート → 翌月から+20〜40万円の可能性<br>
+    ② Hidekoのパーソナル33件の「型」をKanae・Tomomiに伝える → 75分高単価枠の底上げ<br>
+    ③ 月次体験者数・継続率の計測を今月から開始 → 「測らないものは改善できない」<br><br>
+    <small>参考：IHRSA Global Fitness Report 2023 / 矢野経済研究所「フィットネス産業の動向と展望 2023」/ Deci & Ryan "Self-Determination Theory" 1985</small>
+  </div>
+</div>
+
+</div>
+<div class="footer">Kyoto mbm labo ／ Growth Strategy Report 2026 ／ Based on 2025.01-12 data ／ Actual pricing: Group ¥3,000 / Personal 75min ¥11,000 / 60min ¥8,800</div>
+
+<script>
+let TARGET = 3000000;
+
+function setTarget(val, btn){
+  TARGET = val;
+  document.querySelectorAll('.tt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  sim();
+}
+
+function fmt(n){ return Math.round(n).toLocaleString('ja-JP'); }
+
+function sim(){
+  const gClass = +document.getElementById('gClass').value;
+  const gFill  = +document.getElementById('gFill').value / 100;
+  const p75    = +document.getElementById('p75').value;
+  const p60    = +document.getElementById('p60').value;
+  const cCount = +document.getElementById('cCount').value;
+  const cPrice = +document.getElementById('cPrice').value;
+
+  document.getElementById('vGClass').textContent = gClass + '本';
+  document.getElementById('vGFill').textContent  = (+document.getElementById('gFill').value) + '%';
+  document.getElementById('vP75').textContent    = p75 + '件';
+  document.getElementById('vP60').textContent    = p60 + '件';
+  document.getElementById('vCC').textContent     = cCount + '件';
+  document.getElementById('vCP').textContent     = fmt(cPrice) + '円';
+
+  const gRev   = gFill * gClass * 10 * 3000;
+  const p75Rev = p75 * 11000;
+  const p60Rev = p60 * 8800;
+  const cRev   = cCount * cPrice;
+  const total  = gRev + p75Rev + p60Rev + cRev;
+
+  const gM   = Math.round(gRev/10000);
+  const p75M = Math.round(p75Rev/10000);
+  const p60M = Math.round(p60Rev/10000);
+  const cM   = Math.round(cRev/10000);
+  const totM = Math.round(total/10000);
+
+  document.getElementById('simTotal').textContent = fmt(totM) + '万円';
+  document.getElementById('bl1').textContent = gM + '万';
+  document.getElementById('bl2').textContent = p75M + '万';
+  document.getElementById('bl3').textContent = p60M + '万';
+  document.getElementById('bl4').textContent = cM + '万';
+
+  const t = total || 1;
+  document.getElementById('bs1').style.width = (gRev/t*100).toFixed(1)+'%';
+  document.getElementById('bs2').style.width = (p75Rev/t*100).toFixed(1)+'%';
+  document.getElementById('bs3').style.width = (p60Rev/t*100).toFixed(1)+'%';
+  document.getElementById('bs4').style.width = (cRev/t*100).toFixed(1)+'%';
+
+  const kpis = [
+    { l:'月間収益（推定）', v: fmt(totM)+'万円', s: total >= TARGET ? '目標達成！' : 'あと'+fmt(Math.round((TARGET-total)/10000))+'万円' },
+    { l:'グループ収益', v: gM+'万円', s: gClass+'本 × 充足率'+Math.round(gFill*100)+'%' },
+    { l:'P 75分収益', v: p75M+'万円', s: p75+'件 × 11,000円' },
+    { l:'P 60分収益', v: p60M+'万円', s: p60+'件 × 8,800円' },
+  ];
+  const g = document.getElementById('simKpis');
+  g.innerHTML = '';
+  kpis.forEach(k => {
+    g.innerHTML += `<div class="sim-kpi"><div class="sim-kpi-label">${k.l}</div><div class="sim-kpi-val">${k.v}</div><div class="sim-kpi-sub">${k.s}</div></div>`;
+  });
+
+  const msg = document.getElementById('simMsg');
+  const tLabel = TARGET === 2000000 ? '200万円' : '300万円';
+  if(total >= TARGET){
+    msg.className = 'status-msg status-ok';
+    msg.textContent = `月間${tLabel}達成！この設定が目標ラインです。`;
+  } else if(total >= TARGET * 0.85){
+    msg.className = 'status-msg status-near';
+    msg.textContent = `目標${tLabel}まであと${fmt(Math.round((TARGET-total)/10000))}万円。もう少しです。`;
+  } else {
+    msg.className = 'status-msg status-far';
+    msg.textContent = `現在${fmt(totM)}万円 ／ 目標${tLabel}まであと${fmt(Math.round((TARGET-total)/10000))}万円。`;
+  }
+}
+sim();
+</script>
+</body>
+</html>
